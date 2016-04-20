@@ -1,0 +1,19 @@
+<ion-view view-title="Cities">
+  <ion-content>
+    <ion-list>
+      <ion-item class="item-remove-animate item-avatar item-icon-right" ng-repeat="city in userCities" type="item-text-wrap">
+      	<div class="city-summary float-left">
+      		<h2>{{city.name}}&nbsp;{{city.timezone}}</h2>
+        	<p>{{city.country}}</p>	
+      	</div>
+        <div class="city-datetime-wrapper float-right">
+        	<h2 class="city-datetime">{{city.datetime}}</h2>
+        </div>
+        <ion-option-button class="button-assertive" ng-click="remove(city)">
+          Delete
+        </ion-option-button>
+      </ion-item>
+    </ion-list>
+    <h2 data-bind=""></h2>
+  </ion-content>
+</ion-view>
