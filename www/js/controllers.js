@@ -1,26 +1,9 @@
-angular.module('starter.controllers', [])
+'use strict';
 
-.controller('CitiesCtrl', function($scope, UserCities, GeoLocation, Timezone) {
+angular.module('intime.controllers', [])
 
-  var userCities = UserCities.all(),
-      currentTimezone = Timezone.getCurrentTimezone();
-
-  userCities.map(function(city) {
-    city.datetime = Timezone.getDatetimeByTimezone(Timezone.convertTimezoneFormat('number', city.timezone));
+.controller('CitiesCtrl', function($scope, System) {
+  System.init().then(function(userCities) {
+    $scope.userCities = userCities;
   });
-
-  GeoLocation.getCurrentAreaInfo().then(function(areaInfo) {
-    var currentCity = {
-      id: 'currentLocation',
-      name: areaInfo.cityName,
-      country: areaInfo.country,
-      timezone: currentTimezone,
-      datetime: Timezone.getCurrentDatetime()
-    }
-
-    userCities.unshift(currentCity);
-  });
-
-  $scope.userCities = userCities;
-
 });

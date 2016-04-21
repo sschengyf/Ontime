@@ -1,8 +1,11 @@
-angular.module('starter.services', ['ngStorage'])
+'use strict';
+
+angular.module('intime.services', ['ngStorage'])
 
 .factory('AJAX', function($http, $q) {
 
   var _get = function(url, params) {
+
     var deferred = $q.defer();
 
     $http.get(url, {
@@ -86,7 +89,7 @@ angular.module('starter.services', ['ngStorage'])
     result.push(
       date.getFullYear(),
       '-',
-      date.getMonth() + 1,
+      date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1,
       '-',
       date.getDate(),
       ' ',
@@ -116,8 +119,8 @@ angular.module('starter.services', ['ngStorage'])
   };
 
   var _getCurrentTimezoneOffsetMins = function() {
-    var today = new Date();
-    currentTimezoneOffsetMins = today.getTimezoneOffset();
+    var today = new Date(),
+        currentTimezoneOffsetMins = today.getTimezoneOffset();
     return -currentTimezoneOffsetMins;
   };
 
@@ -156,7 +159,7 @@ angular.module('starter.services', ['ngStorage'])
           return false;
         }
 
-        var hoursMinutes = timezone.split(':');
+        var hoursMinutes = timezone.split(':'),
             hours = parseInt(hoursMinutes[0]),
             minutes = parseInt(hoursMinutes[1]);
 
@@ -196,7 +199,7 @@ angular.module('starter.services', ['ngStorage'])
           }
         ); 
       }, function(err) {
-        deferred.reject('Cound not get location data');
+        deferred.reject(err);
       });
 
       return deferred.promise;
@@ -232,7 +235,7 @@ angular.module('starter.services', ['ngStorage'])
                   administrative_area_level_1: 'cityName',
                   country: 'country'
                 },
-                areaFiled;
+                areaField;
             addressComponents.forEach(function(item) {
               if(areaField = areaFields[item.types[0]]) {
                 areaInfo[areaField] = item.long_name;
@@ -240,6 +243,8 @@ angular.module('starter.services', ['ngStorage'])
             });
             deferred.resolve(areaInfo);
           });
+        }, function(err) {
+          deferred.reject(err);
         });
 
         return deferred.promise;
@@ -249,4 +254,37 @@ angular.module('starter.services', ['ngStorage'])
       getCurrentCoords: _getCurrentCoords,
       getCurrentAreaInfo: _getCurrentAreaInfo
     };
+})
+
+.factory('System', function(UserCities, GeoLocation, Timezone, $q) {
+
+  var _init = function() {
+
+    var userCities = UserCities.all(),
+        currentTimezone = Timezone.getCurrentTimezone(),
+        deferred = $q.defer(),
+        currentCity = {
+          id: 'currentLocation',
+          name: '',
+          country: '',
+          timezone: currentTimezone
+        };
+
+    GeoLocation.getCurrentAreaInfo().then(function(areaInfo) {
+      currentCity.name = areaInfo.cityName;
+      currentCity.country = areaInfo.country;
+      userCities.unshift(currentCity);
+      deferred.resolve(userCities);
+    }, function(err) {
+      currentCity.name = 'Could not locate your place.';
+      userCities.unshift(currentCity);
+      deferred.resolve(userCities);
+    });
+
+    return deferred.promise;
+  };
+
+  return {
+    init: _init
+  }
 });
