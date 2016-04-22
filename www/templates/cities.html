@@ -1,7 +1,12 @@
 <ion-view view-title="Cities">
+  <ion-nav-buttons side="right">
+      <button class="button button-clear button-positive" ng-click="gotoAdd()">
+      Add
+      </button>
+    </ion-nav-buttons>
   <ion-content>
     <ion-list>
-      <ion-item class="item-remove-animate item-avatar item-icon-right" ng-repeat="city in userCities" type="item-text-wrap">
+      <ion-item class="item-remove-animate item-avatar item-icon-right" ng-repeat="city in userCities" type="item-text-wrap" href="#/edit/{{city.id}}">
       	<div class="city-summary float-left">
       		<h2>{{city.name}}&nbsp;{{city.timezone}}</h2>
         	<p>{{city.country}}</p>	
@@ -14,6 +19,5 @@
         </ion-option-button>
       </ion-item>
     </ion-list>
-    <h2 data-bind=""></h2>
   </ion-content>
 </ion-view>

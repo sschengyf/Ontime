@@ -22,7 +22,7 @@ angular.module('intime.directives', ['intime.services'])
 		    });
 
 			intervalId = $interval(function() {
-				scope.datetime = Timezone.getDatetimeByTimezone(timezoneVal);
+				scope.datetime = Timezone.formatDatetime(Timezone.getDateObjByTimezone(timezoneVal), 'HH:mm');
 			}, 1000);
 		}  
    };  

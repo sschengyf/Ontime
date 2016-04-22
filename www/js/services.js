@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('intime.services', ['ngStorage'])
+angular.module('intime.services', ['ngStorage', 'ngResource'])
 
 .factory('AJAX', function($http, $q) {
 
@@ -45,28 +45,33 @@ angular.module('intime.services', ['ngStorage'])
   };
 })
 
+.factory('LocalJsonResource', function($resource) {
+  return {
+    read: function(file) {
+      return $resource('json/' + file);
+    }
+  };
+})
+
 .factory('UserCities', function($localStorage) {
 
   return {
     all: function() {
 
-      return [
-        {
-          id: 7,
-          name: 'Tokyo',
-          country: 'Japan',
-          timezone: '+09:00'
-        },
-        {
-          id: 12,
-          name: 'Chengdu',
-          country: 'China',
-          timezone: '+08:00'
-        },
-      ];
+      var userCities = $localStorage.userCities || [],
+          currentCity = {
+            id: 'currentLocation',
+            name: '',
+            country: '',
+            timezone: ''
+          };
 
+      if(0 === userCities.length) {
+        userCities.push(currentCity);
+        $localStorage.userCities = userCities;
+      }
 
-      return $localStorage.userCities || [];
+      return userCities;
     },
     add: function(city) {
       var userCities = this.all();
@@ -82,25 +87,13 @@ angular.module('intime.services', ['ngStorage'])
 
 })
 
-.factory('Timezone', function() {
+.factory('Timezone', function($filter) {
 
-  var _formatDatetime = function(date) {
-    var result = [];
-    result.push(
-      date.getFullYear(),
-      '-',
-      date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1,
-      '-',
-      date.getDate(),
-      ' ',
-      date.getHours(),
-      ':',
-      date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
-    );
-    return result.join('');
+  var _formatDatetime = function(date, format) {
+    return $filter('date')(date, format);
   };
 
-  var _getDatetimeByTimezone = function(timezone) {
+  var _getDateObjByTimezone = function(timezone) {
     var s = 1000,
         m = s * 60,
         h = m * 60,
@@ -110,12 +103,12 @@ angular.module('intime.services', ['ngStorage'])
         timezoneOffsetSeconds = _getCurrentTimezoneOffsetMins() * m;
 
     date.setTime(now - timezoneOffsetSeconds + (timezone * h));
-    return _formatDatetime(date);
+    return date;
   };
 
   var _getCurrentDatetime = function() {
     var today = new Date();
-    return _formatDatetime(today);
+    return _formatDatetime(today, 'yyyy-mm-dd hh:mm:ss');
   };
 
   var _getCurrentTimezoneOffsetMins = function() {
@@ -178,8 +171,9 @@ angular.module('intime.services', ['ngStorage'])
     getCurrentTimezoneOffsetMins: _getCurrentTimezoneOffsetMins,
     getCurrentTimezone: _getCurrentTimezone,
     convertTimezoneFormat: _convertTimezoneFormat,
-    getDatetimeByTimezone: _getDatetimeByTimezone,
-    getCurrentDatetime: _getCurrentDatetime
+    getDateObjByTimezone: _getDateObjByTimezone,
+    getCurrentDatetime: _getCurrentDatetime,
+    formatDatetime: _formatDatetime
   };
 })
 
@@ -263,21 +257,16 @@ angular.module('intime.services', ['ngStorage'])
     var userCities = UserCities.all(),
         currentTimezone = Timezone.getCurrentTimezone(),
         deferred = $q.defer(),
-        currentCity = {
-          id: 'currentLocation',
-          name: '',
-          country: '',
-          timezone: currentTimezone
-        };
+        currentCity = userCities[0];
+
+    currentCity.timezone = currentTimezone;
 
     GeoLocation.getCurrentAreaInfo().then(function(areaInfo) {
       currentCity.name = areaInfo.cityName;
       currentCity.country = areaInfo.country;
-      userCities.unshift(currentCity);
       deferred.resolve(userCities);
     }, function(err) {
-      currentCity.name = 'Could not locate your place.';
-      userCities.unshift(currentCity);
+      currentCity.name = 'Unknown Place';
       deferred.resolve(userCities);
     });
 

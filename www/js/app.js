@@ -27,27 +27,28 @@ angular.module('intime', ['ionic', 'intime.controllers', 'intime.services', 'int
   $stateProvider
 
   // setup an abstract state for the tabs directive
-  .state('tab', {
-    url: '/tab',
-    abstract: true,
-    templateUrl: 'templates/tabs.html'
-  })
 
   // Each tab has its own nav history stack:
 
-  .state('tab.cities', {
+  .state('cities', {
     url: '/cities',
-    // templateUrl: 'templates/tab-cities.html',
-    // controller: 'CitiesCtrl'
-    views: {
-      'tab-cities': {
-        templateUrl: 'templates/tab-cities.html',
-        controller: 'CitiesCtrl'
-      }
-    }
+    templateUrl: 'templates/cities.html',
+    controller: 'CitiesCtrl'
+  })
+
+  .state('edit', {
+    url: '/edit/:cityId',
+    templateUrl: 'templates/edit.html',
+    controller: 'TimeEditCtrl'
+  })
+
+  .state('add', {
+    url: '/add',
+    templateUrl: 'templates/add.html',
+    controller: 'CityAddCtrl'
   });
 
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/tab/cities');
+  $urlRouterProvider.otherwise('/cities');
 
 });

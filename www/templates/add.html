@@ -1,0 +1,18 @@
+<ion-view view-title="Add">
+  <ion-content>
+	<div class="bar bar-header item-input-inset">
+		<label class="item-input-wrapper">
+	    	<i class="icon ion-ios-search placeholder-icon"></i>
+			<input type="search" placeholder="Search" ng-model="searchVal"/>
+	  	</label>
+		<button class="button button-clear" ng-click="searchVal=''">
+			Cancel
+		</button>
+	</div>
+	<ion-list>
+	  <ion-item ng-repeat="city in cities">
+	  	<h2>{{city.name}},&nbsp;{{city.country}}</h2>
+	  </ion-item>
+	</ion-list>
+  </ion-content>
+</ion-view>
