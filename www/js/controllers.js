@@ -26,7 +26,7 @@ angular.module('intime.controllers', [])
 
 		cities = cities.filter(function(city) {
 			return !(userCities.findIndex(function(userCity) {
-				return userCity.id === city.id;
+				return userCity.id === city.id || (userCity.name === city.name && userCity.country === city.country);
 			}) > -1);
 		});
 
