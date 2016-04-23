@@ -17,8 +17,32 @@ angular.module('intime.controllers', [])
 
 })
 
-.controller('CityAddCtrl', function($scope, LocalJsonResource) {
+.controller('CityAddCtrl', function($scope, LocalJsonResource, $location, UserCities) {
+
+	var userCities = UserCities.all();
+
 	LocalJsonResource.read('cities.json').get(function(data) {
-		$scope.cities = data.cities;
+		var cities = data.cities;
+
+		cities = cities.filter(function(city) {
+			return !(userCities.findIndex(function(userCity) {
+				return userCity.id === city.id;
+			}) > -1);
+		});
+
+		$scope.cities = cities;
 	});
+
+	var gotoCities = function() {
+		$location.path('/cities').replace();
+	}
+
+	$scope.cancel = function() {
+		gotoCities();
+	};
+
+	$scope.addCity = function(city) {
+		UserCities.add(city);
+		gotoCities();
+	};
 });

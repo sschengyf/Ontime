@@ -82,6 +82,12 @@ angular.module('intime.services', ['ngStorage', 'ngResource'])
       var userCities = this.all();
       userCities.splice(userCities.indexOf(city), 1);
       $localStorage.userCities = userCities;
+    },
+    save: function(userCities) {
+      $localStorage.userCities = userCities;
+    },
+    clearAll: function () {
+      $localStorage.userCities = [];
     }
   };
 
@@ -253,7 +259,7 @@ angular.module('intime.services', ['ngStorage', 'ngResource'])
 .factory('System', function(UserCities, GeoLocation, Timezone, $q) {
 
   var _init = function() {
-
+    
     var userCities = UserCities.all(),
         currentTimezone = Timezone.getCurrentTimezone(),
         deferred = $q.defer(),
@@ -264,9 +270,11 @@ angular.module('intime.services', ['ngStorage', 'ngResource'])
     GeoLocation.getCurrentAreaInfo().then(function(areaInfo) {
       currentCity.name = areaInfo.cityName;
       currentCity.country = areaInfo.country;
+      UserCities.save(userCities);
       deferred.resolve(userCities);
     }, function(err) {
       currentCity.name = 'Unknown Place';
+      UserCities.save(userCities);
       deferred.resolve(userCities);
     });
 
