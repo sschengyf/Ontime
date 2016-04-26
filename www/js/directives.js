@@ -26,4 +26,50 @@ angular.module('intime.directives', ['intime.services'])
 			}, 1000);
 		}  
    };  
-}]);
+}])
+
+.directive('focusMe', function($timeout) {
+	return {
+	  	restrict: 'A',
+	    scope: { trigger: '=focusMe' },
+	    link: function(scope, element) {
+
+	    	element.on('focus', function() {
+	    		console.log('focused');
+	    	});
+
+	    	element.on('click', function() {
+	    		console.log("clicked");
+	    	});
+
+	  		scope.$watch('trigger', function(value) {
+		      	console.log(value);
+		        if(value === true) {
+		        	$timeout(function() {
+		        		element[0].focus(); 
+		        		element[0].click();
+		        		scope.trigger = false;
+		        	});
+		        }
+	      	});
+	    }
+  	};
+})
+
+.directive('cityWithDatetime', function() {
+	return {
+		templateUrl: 'templates/cityWithDatetime.html',
+		restrict: 'E',
+		replace: true,
+		scope: {
+			city: '=city'
+		},
+		link: function(scope, element, attrs) {
+			scope.editTime = false;
+			// element.on('click', function() {
+			// 	console.log('aaa');
+			// 	scope.editTime = true;
+			// });
+		}
+	};
+});

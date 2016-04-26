@@ -6,14 +6,8 @@
     </ion-nav-buttons>
   <ion-content>
     <ion-list>
-      <ion-item class="item-remove-animate item-avatar item-icon-right" ng-repeat="city in userCities" type="item-text-wrap" href="#/edit/{{city.id}}">
-      	<div class="city-summary float-left">
-      		<h2>{{city.name}}&nbsp;UTC{{city.timezone}}</h2>
-        	<p>{{city.country}}</p>	
-      	</div>
-        <div class="city-datetime-wrapper float-right">
-          <realtime-datetime timezone={{city.timezone}}></realtime-datetime>
-        </div>
+      <ion-item class="item-remove-animate item-avatar item-icon-right" ng-repeat="city in userCities" type="item-text-wrap" ng-click="city.editTime=true">
+        <city-with-datetime city="city"></city-with-datetime>
         <ion-option-button class="button-assertive" ng-click="remove(city)" ng-if="$first === false">
           Delete
         </ion-option-button>
