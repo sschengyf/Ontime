@@ -36,12 +36,6 @@ angular.module('intime', ['ionic', 'intime.controllers', 'intime.services', 'int
     controller: 'CitiesCtrl'
   })
 
-  .state('edit', {
-    url: '/edit/:cityId',
-    templateUrl: 'templates/edit.html',
-    controller: 'TimeEditCtrl'
-  })
-
   .state('add', {
     url: '/add',
     templateUrl: 'templates/add.html',

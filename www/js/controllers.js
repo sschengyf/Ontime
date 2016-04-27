@@ -11,10 +11,8 @@ angular.module('intime.controllers', [])
   $scope.gotoAdd = function() {
   	$location.path('/add').replace();
   };
-})
 
-.controller('TimeEditCtrl', function($scope, $stateParams) {
-
+  $scope.adjustOffset = 0;
 })
 
 .controller('CityAddCtrl', function($scope, LocalJsonResource, $location, UserCities) {

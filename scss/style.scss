@@ -16,6 +16,9 @@
 		display: inline-block;
 		position: absolute;
 		right: 0px;
+		.city-datetime {
+			text-align: right;
+		}
 		.hidden-datetime-picker {
 			opacity: 0; 
 			width: 0px; 

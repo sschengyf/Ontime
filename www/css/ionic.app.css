@@ -9748,6 +9748,8 @@ a.button {
     display: inline-block;
     position: absolute;
     right: 0px; }
+    .city-item .city-datetime-wrapper .city-datetime {
+      text-align: right; }
     .city-item .city-datetime-wrapper .hidden-datetime-picker {
       opacity: 0;
       width: 0px;

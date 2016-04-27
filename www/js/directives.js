@@ -4,7 +4,7 @@ angular.module('intime.directives', ['intime.services'])
 
 .directive('realtimeDatetime', ['$interval', 'Timezone', function($interval, Timezone) {
 	return {
-		template: '<h2 class="city-datetime">{{datetime}}</h2>',
+		template: '<div class="city-datetime"><h2>{{time}}</h2><h2>{{date}}</h2></div>',
 		restrict: 'E',
 		replace: true,
 		link: function(scope, element, attrs) {
@@ -15,17 +15,20 @@ angular.module('intime.directives', ['intime.services'])
 
 			var intervalId,
 				timezone = attrs.timezone,
-				timezoneVal = Timezone.convertTimezoneFormat('number', timezone);
+				timezoneVal = Timezone.convertTimezoneFormat('number', timezone),
+				currentDateObj = null;
 
 			element.on('$destroy', function() {
 		      $interval.cancel(timeoutId);
 		    });
 
 			intervalId = $interval(function() {
-				scope.datetime = Timezone.formatDatetime(Timezone.getDateObjByTimezone(timezoneVal), 'HH:mm');
+				currentDateObj = Timezone.getDateObjByTimezone(timezoneVal);
+				scope.time = Timezone.formatDatetime(currentDateObj, 'HH:mm');
+				scope.date = Timezone.formatDatetime(currentDateObj, 'yyyy-MM-dd');
 			}, 1000);
-		}  
-   };  
+		}
+	};  
 }])
 
 .directive('focusMe', function($timeout) {
