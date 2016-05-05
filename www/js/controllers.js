@@ -2,7 +2,7 @@
 
 angular.module('intime.controllers', [])
 
-.controller('CitiesCtrl', function($scope, System, $location) {
+.controller('CitiesCtrl', function($scope, System, $location, UserCities) {
 
   System.init().then(function(userCities) {
     $scope.userCities = userCities;
@@ -10,6 +10,12 @@ angular.module('intime.controllers', [])
 
   $scope.gotoAdd = function() {
   	$location.path('/add').replace();
+  };
+
+  $scope.remove = function(city) {
+  	var userCities = UserCities.remove(city);
+  	userCities[0] = $scope.userCities[0];
+  	$scope.userCities = userCities;
   };
 
   $scope.adjustOffset = 0;

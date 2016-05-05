@@ -57,7 +57,6 @@ angular.module('intime.services', ['ngStorage', 'ngResource'])
 
   return {
     all: function() {
-
       var userCities = $localStorage.userCities || [],
           currentCity = {
             id: 'currentLocation',
@@ -74,14 +73,28 @@ angular.module('intime.services', ['ngStorage', 'ngResource'])
       return userCities;
     },
     add: function(city) {
-      var userCities = this.all();
-      userCities.push(city);
-      $localStorage.userCities = userCities;
+      try {
+        var userCities = this.all();
+        userCities.push(city);
+        $localStorage.userCities = userCities;
+        return true;
+      }
+      catch(err) {
+        console.log(err);
+        return false;
+      }
     },
     remove: function(city) {
-      var userCities = this.all();
-      userCities.splice(userCities.indexOf(city), 1);
-      $localStorage.userCities = userCities;
+      try {
+        var userCities = this.all();
+        userCities.splice(userCities.indexOf(city), 1);
+        $localStorage.userCities = userCities;
+        return this.all();
+      }
+      catch(err) {
+        console.log(err);
+        return false;
+      }
     },
     save: function(userCities) {
       $localStorage.userCities = userCities;

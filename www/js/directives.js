@@ -19,7 +19,7 @@ angular.module('intime.directives', ['intime.services'])
 				currentDateObj = null;
 
 			element.on('$destroy', function() {
-		      $interval.cancel(timeoutId);
+		      $interval.cancel(intervalId);
 		    });
 
 			intervalId = $interval(function() {
