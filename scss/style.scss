@@ -20,9 +20,14 @@
 			text-align: right;
 		}
 		.hidden-datetime-picker {
+			line-height: 0;
 			opacity: 0; 
-			width: 0px; 
-			height: 0px;
+			width: 0; 
+			height: 0;
+			border: 0;
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
 		}
 	}
 }
