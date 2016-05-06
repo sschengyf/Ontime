@@ -18,7 +18,7 @@ angular.module('intime.controllers', [])
   	$scope.userCities = userCities;
   };
 
-  $scope.adjustOffset = 0;
+  
 })
 
 .controller('CityAddCtrl', function($scope, LocalJsonResource, $location, UserCities) {

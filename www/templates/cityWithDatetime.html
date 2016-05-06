@@ -4,9 +4,9 @@
 		<p>{{city.country}}</p>
 	</div>
 	<div class="city-datetime-wrapper">
-		<realtime-datetime timezone={{city.timezone}}></realtime-datetime>
+		<realtime-datetime timezone={{city.timezone}} current-datetime="currentDatetime"></realtime-datetime>
 		<div class="hidden-datetime-picker">
-			<input name="datetime" type="datetime-local" ng-model="city.datetime" focus-me="city.editTime"/>
+			<input name="datetime" type="datetime-local" focus-me="city.editTime" ng-model="setDatetime" ng-change="handleChange()"/>
 		</div>
 	</div>	
 </div>
