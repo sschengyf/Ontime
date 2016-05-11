@@ -6,5 +6,8 @@
   },
   "resolutions": {
     "angular": "1.4.3"
+  },
+  "dependencies": {
+    "ng-redux": "^3.3.0"
   }
 }
