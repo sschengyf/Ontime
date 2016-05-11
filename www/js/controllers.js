@@ -1,6 +1,4 @@
-'use strict';
-
-angular.module('intime.controllers', [])
+angular.module('ontime.controllers', [])
 
 .controller('CitiesCtrl', function($scope, System, $location, UserCities) {
 
@@ -18,7 +16,7 @@ angular.module('intime.controllers', [])
   	$scope.userCities = userCities;
   };
 
-  
+
 })
 
 .controller('CityAddCtrl', function($scope, LocalJsonResource, $location, UserCities) {

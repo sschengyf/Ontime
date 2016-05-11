@@ -1,6 +1,6 @@
-'use strict';
+import ngRedux from '../lib/ng-redux/dist/ng-redux';
 
-angular.module('intime', ['ionic', 'intime.controllers', 'intime.services', 'intime.directives', 'ngCordova'])
+angular.module('ontime', ['ionic', 'ontime.controllers', 'ontime.services', 'ontime.directives', 'ngCordova', ngRedux])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {

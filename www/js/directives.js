@@ -1,6 +1,4 @@
-'use strict';
-
-angular.module('intime.directives', ['intime.services'])
+angular.module('ontime.directives', ['ontime.services'])
 
 .directive('realtimeDatetime', ['$interval', 'Timezone', function($interval, Timezone) {
 	return {

@@ -1,6 +1,4 @@
-'use strict';
-
-angular.module('intime.services', ['ngStorage', 'ngResource'])
+angular.module('ontime.services', ['ngStorage', 'ngResource'])
 
 .factory('AJAX', function($http, $q) {
 
@@ -10,15 +8,15 @@ angular.module('intime.services', ['ngStorage', 'ngResource'])
 
     $http.get(url, {
       params: params
-    }).then(function(response) {
-      if(200 === response.status) {
+    }).then(
+      (response) => {if(200 === response.status) {
         deferred.resolve(response.data);
       } else {
         console.log(response.status, response.statusText);
+      }}, (err) => {
+        deferred.reject(err); 
       }
-    }, function(err) {
-      deferred.reject(err);
-    });
+    );
 
     return deferred.promise;
   };
@@ -26,15 +24,17 @@ angular.module('intime.services', ['ngStorage', 'ngResource'])
   var _post = function(url, data) {
     var deferred = $q.defer();
 
-    $http.post(url, data).then(function(response) {
-      if(200 === response.status) {
-        deferred.resolve(response.data);
-      } else {
-        console.log(response.status, response.statusText);
+    $http.post(url, data).then(
+      (response) => {
+        if(200 === response.status) {
+          deferred.resolve(response.data);
+        } else {
+          console.log(response.status, response.statusText);
+        }  
+      }, (err) => {
+        deferred.reject(err);
       }
-    }, function(err) {
-      deferred.reject(err);
-    });
+    );
 
     return deferred.promise;
   };

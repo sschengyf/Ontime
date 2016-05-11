@@ -7,12 +7,11 @@ var minifyCss = require('gulp-minify-css');
 var rename = require('gulp-rename');
 var sh = require('shelljs');
 var sourcemaps = require("gulp-sourcemaps");
-var babel = require("gulp-babel");
-var concat = require("gulp-concat");
+var webpack = require("webpack-stream");
 
 var paths = {
   sass: ['./scss/**/*.scss'],
-  js: ['./www/js/*.js']
+  js: ['./www/js/*.js'],
 };
 
 gulp.task('default', ['sass', 'js']);
@@ -32,10 +31,7 @@ gulp.task('sass', function(done) {
 
 gulp.task('js', function() {
   return gulp.src("www/js/*.js")
-    .pipe(sourcemaps.init())
-    .pipe(babel())
-    .pipe(concat("timezone.js"))
-    .pipe(sourcemaps.write("."))
+    .pipe(webpack(require('./webpack.config.js')))
     .pipe(gulp.dest("www/js/dist"));
 });
 
