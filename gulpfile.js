@@ -11,7 +11,7 @@ var webpack = require("webpack-stream");
 
 var paths = {
   sass: ['./scss/**/*.scss'],
-  js: ['./www/js/*.js'],
+  js: ['./www/js/*.js', './www/js/redux/*.js'],
 };
 
 gulp.task('default', ['sass', 'js']);
