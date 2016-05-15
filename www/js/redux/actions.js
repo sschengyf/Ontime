@@ -1,3 +1,8 @@
-const CHANGE_TIME = 'change_time';
+import * as actionTypes from './actionTypes';
 
-export {CHANGE_TIME};
+const changeTime = (timeChangedOffset) => ({
+	type: actionTypes.CHANGE_TIME,
+	timeChangedOffset: timeChangedOffset
+});
+
+export {changeTime};
