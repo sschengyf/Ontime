@@ -1,6 +1,8 @@
+import { changeTime } from './redux/actions';
+
 angular.module('ontime.directives', ['ontime.services'])
 
-.directive('realtimeDatetime', ['$interval', 'Timezone', function($interval, Timezone) {
+.directive('realtimeDatetime', ['$interval', 'Timezone', '$ngRedux', function($interval, Timezone, $ngRedux) {
 	return {
 		template: '<div class="city-datetime"><h2>{{time}}</h2><h2>{{date}}</h2></div>',
 		restrict: 'E',
@@ -8,23 +10,32 @@ angular.module('ontime.directives', ['ontime.services'])
 		scope: {
 			currentDatetime: '='
 		},
-		link: function(scope, element, attrs) {
+		link: (scope, element, attrs) => {
 
 			if(undefined === attrs.timezone) {
 				return false;
 			}
 
-			var intervalId,
+			let intervalId,
 				timezone = attrs.timezone,
 				timezoneVal = Timezone.convertTimezoneFormat('number', timezone),
-				currentDateObj = null;
+				timeChangedOffset = 0,
+				currentDateObj = null,
+				unsubscribe = $ngRedux.subscribe(
+					() => {
+						let state = $ngRedux.getState();
+						timeChangedOffset = state.timeChangedOffset;
+						console.log(state);
+					}
+				);
 
-			element.on('$destroy', function() {
+			element.on('$destroy', () => {
 		      $interval.cancel(intervalId);
+		      unsubscribe();
 		    });
 
-			intervalId = $interval(function() {
-				currentDateObj = Timezone.getDateObjByTimezone(timezoneVal);
+			intervalId = $interval(() => {
+				currentDateObj = Timezone.getDateObjByTimezone(timezoneVal, timeChangedOffset);
 				scope.currentDatetime = currentDateObj;
 				scope.time = Timezone.formatDatetime(currentDateObj, 'HH:mm');
 				scope.date = Timezone.formatDatetime(currentDateObj, 'yyyy-MM-dd');
@@ -50,7 +61,7 @@ angular.module('ontime.directives', ['ontime.services'])
   	};
 })
 
-.directive('cityWithDatetime', function() {
+.directive('cityWithDatetime', function($ngRedux) {
 	return {
 		templateUrl: 'templates/cityWithDatetime.html',
 		restrict: 'E',
@@ -61,9 +72,11 @@ angular.module('ontime.directives', ['ontime.services'])
 		link: function(scope, element, attrs) {
 			scope.currentDatetime = null;
 			scope.setDatetime = null;
+			
 			scope.handleChange = function() {
-				var offset = scope.currentDatetime.getTime() - scope.setDatetime.getTime();
-				console.log(offset / 1000 / 60);
+				let offset = scope.setDatetime.getTime() - scope.currentDatetime.getTime();
+				$ngRedux.dispatch(changeTime(offset));
+				console.log(offset);
 			};
 		}
 	};

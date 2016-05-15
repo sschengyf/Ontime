@@ -108,20 +108,20 @@ angular.module('ontime.services', ['ngStorage', 'ngResource'])
 
 .factory('Timezone', function($filter) {
 
-  var _formatDatetime = function(date, format) {
+  const _formatDatetime = function(date, format) {
     return $filter('date')(date, format);
   };
 
-  var _getDateObjByTimezone = function(timezone) {
-    var s = 1000,
+  const _getDateObjByTimezone = function(timezone, timeChangedOffset = 0) {
+    const s = 1000,
         m = s * 60,
         h = m * 60,
-        d = h * 24,
-        now = Date.now(),
+        d = h * 24;
+    let now = Date.now(),
         date = new Date(),
         timezoneOffsetSeconds = _getCurrentTimezoneOffsetMins() * m;
 
-    date.setTime(now - timezoneOffsetSeconds + (timezone * h));
+    date.setTime(now - timezoneOffsetSeconds + (timezone * h) + timeChangedOffset);
     return date;
   };
 

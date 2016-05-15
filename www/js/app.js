@@ -1,9 +1,11 @@
-import ngRedux from '../lib/ng-redux/dist/ng-redux';
+import ngRedux from 'ng-redux';
+import { timeChanger } from './redux/reducers';
+import { combineReducers } from 'redux';
 
-angular.module('ontime', ['ionic', 'ontime.controllers', 'ontime.services', 'ontime.directives', 'ngCordova', ngRedux])
+angular.module('ontime', ['ionic', 'ontime.controllers', 'ontime.services', 'ontime.directives', 'ngCordova', 'ngRedux'])
 
-.run(function($ionicPlatform) {
-  $ionicPlatform.ready(function() {
+.run(($ionicPlatform) => {
+  $ionicPlatform.ready(() => {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
     if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
@@ -18,7 +20,7 @@ angular.module('ontime', ['ionic', 'ontime.controllers', 'ontime.services', 'ont
   });
 })
 
-.config(function($stateProvider, $urlRouterProvider) {
+.config(($stateProvider, $urlRouterProvider, $ngReduxProvider) => {
 
   // Ionic uses AngularUI Router which uses the concept of states
   // Learn more here: https://github.com/angular-ui/ui-router
@@ -45,4 +47,7 @@ angular.module('ontime', ['ionic', 'ontime.controllers', 'ontime.services', 'ont
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/cities');
 
+  $ngReduxProvider.createStoreWith({
+    timeChangedOffset: timeChanger
+  });
 });

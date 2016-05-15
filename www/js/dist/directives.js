@@ -40,13 +40,16 @@
 /******/ 	return __webpack_require__(0);
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
-/***/ function(module, exports) {
+/******/ ({
+
+/***/ 0:
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	angular.module('ontime.directives', ['ontime.services']).directive('realtimeDatetime', ['$interval', 'Timezone', function ($interval, Timezone) {
+	var _actions = __webpack_require__(41);
+
+	angular.module('ontime.directives', ['ontime.services']).directive('realtimeDatetime', ['$interval', 'Timezone', '$ngRedux', function ($interval, Timezone, $ngRedux) {
 		return {
 			template: '<div class="city-datetime"><h2>{{time}}</h2><h2>{{date}}</h2></div>',
 			restrict: 'E',
@@ -60,17 +63,24 @@
 					return false;
 				}
 
-				var intervalId,
+				var intervalId = void 0,
 				    timezone = attrs.timezone,
 				    timezoneVal = Timezone.convertTimezoneFormat('number', timezone),
-				    currentDateObj = null;
+				    timeChangedOffset = 0,
+				    currentDateObj = null,
+				    unsubscribe = $ngRedux.subscribe(function () {
+					var state = $ngRedux.getState();
+					timeChangedOffset = state.timeChangedOffset;
+					console.log(state);
+				});
 
 				element.on('$destroy', function () {
 					$interval.cancel(intervalId);
+					unsubscribe();
 				});
 
 				intervalId = $interval(function () {
-					currentDateObj = Timezone.getDateObjByTimezone(timezoneVal);
+					currentDateObj = Timezone.getDateObjByTimezone(timezoneVal, timeChangedOffset);
 					scope.currentDatetime = currentDateObj;
 					scope.time = Timezone.formatDatetime(currentDateObj, 'HH:mm');
 					scope.date = Timezone.formatDatetime(currentDateObj, 'yyyy-MM-dd');
@@ -92,7 +102,7 @@
 				});
 			}
 		};
-	}).directive('cityWithDatetime', function () {
+	}).directive('cityWithDatetime', function ($ngRedux) {
 		return {
 			templateUrl: 'templates/cityWithDatetime.html',
 			restrict: 'E',
@@ -103,13 +113,57 @@
 			link: function link(scope, element, attrs) {
 				scope.currentDatetime = null;
 				scope.setDatetime = null;
+
 				scope.handleChange = function () {
-					var offset = scope.currentDatetime.getTime() - scope.setDatetime.getTime();
-					console.log(offset / 1000 / 60);
+					var offset = scope.setDatetime.getTime() - scope.currentDatetime.getTime();
+					$ngRedux.dispatch((0, _actions.changeTime)(offset));
+					console.log(offset);
 				};
 			}
 		};
 	});
 
+/***/ },
+
+/***/ 40:
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var CHANGE_TIME = 'change_time';
+
+	exports.CHANGE_TIME = CHANGE_TIME;
+
+/***/ },
+
+/***/ 41:
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.changeTime = undefined;
+
+	var _actionTypes = __webpack_require__(40);
+
+	var actionTypes = _interopRequireWildcard(_actionTypes);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	var changeTime = function changeTime(timeChangedOffset) {
+		return {
+			type: actionTypes.CHANGE_TIME,
+			timeChangedOffset: timeChangedOffset
+		};
+	};
+
+	exports.changeTime = changeTime;
+
 /***/ }
-/******/ ]);
+
+/******/ });

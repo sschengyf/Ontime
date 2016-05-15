@@ -148,15 +148,17 @@
 	  };
 
 	  var _getDateObjByTimezone = function _getDateObjByTimezone(timezone) {
+	    var timeChangedOffset = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
+
 	    var s = 1000,
 	        m = s * 60,
 	        h = m * 60,
-	        d = h * 24,
-	        now = Date.now(),
+	        d = h * 24;
+	    var now = Date.now(),
 	        date = new Date(),
 	        timezoneOffsetSeconds = _getCurrentTimezoneOffsetMins() * m;
 
-	    date.setTime(now - timezoneOffsetSeconds + timezone * h);
+	    date.setTime(now - timezoneOffsetSeconds + timezone * h + timeChangedOffset);
 	    return date;
 	  };
 
