@@ -55,7 +55,8 @@
 			restrict: 'E',
 			replace: true,
 			scope: {
-				currentDatetime: '='
+				currentDatetime: '=',
+				currentDatetimeWithoutTimeOffset: '='
 			},
 			link: function link(scope, element, attrs) {
 
@@ -68,10 +69,10 @@
 				    timezoneVal = Timezone.convertTimezoneFormat('number', timezone),
 				    timeChangedOffset = 0,
 				    currentDateObj = null,
+				    currentDateObjWithoutTimeOffset = null,
 				    unsubscribe = $ngRedux.subscribe(function () {
 					var state = $ngRedux.getState();
 					timeChangedOffset = state.timeChangedOffset;
-					console.log(state);
 				});
 
 				element.on('$destroy', function () {
@@ -81,7 +82,9 @@
 
 				intervalId = $interval(function () {
 					currentDateObj = Timezone.getDateObjByTimezone(timezoneVal, timeChangedOffset);
+					currentDateObjWithoutTimeOffset = Timezone.getDateObjByTimezone(timezoneVal);
 					scope.currentDatetime = currentDateObj;
+					scope.currentDatetimeWithoutTimeOffset = currentDateObjWithoutTimeOffset;
 					scope.time = Timezone.formatDatetime(currentDateObj, 'HH:mm');
 					scope.date = Timezone.formatDatetime(currentDateObj, 'yyyy-MM-dd');
 				}, 1000);
@@ -93,7 +96,7 @@
 			scope: { trigger: '=focusMe' },
 			link: function link(scope, element) {
 				scope.$watch('trigger', function (value) {
-					if (value === true) {
+					if (true === value) {
 						$timeout(function () {
 							element[0].focus();
 							scope.trigger = false;
@@ -112,12 +115,18 @@
 			},
 			link: function link(scope, element, attrs) {
 				scope.currentDatetime = null;
+				scope.currentDatetimeWithoutTimeOffset = null;
 				scope.setDatetime = null;
 
+				scope.$watch('city.editTime', function (value) {
+					if (true === value) {
+						scope.setDatetime = scope.currentDatetime;
+					}
+				});
+
 				scope.handleChange = function () {
-					var offset = scope.setDatetime.getTime() - scope.currentDatetime.getTime();
+					var offset = scope.setDatetime.getTime() - scope.currentDatetimeWithoutTimeOffset.getTime();
 					$ngRedux.dispatch((0, _actions.changeTime)(offset));
-					console.log(offset);
 				};
 			}
 		};

@@ -8,7 +8,8 @@ angular.module('ontime.directives', ['ontime.services'])
 		restrict: 'E',
 		replace: true,
 		scope: {
-			currentDatetime: '='
+			currentDatetime: '=',
+			currentDatetimeWithoutTimeOffset: '='
 		},
 		link: (scope, element, attrs) => {
 
@@ -21,11 +22,11 @@ angular.module('ontime.directives', ['ontime.services'])
 				timezoneVal = Timezone.convertTimezoneFormat('number', timezone),
 				timeChangedOffset = 0,
 				currentDateObj = null,
+				currentDateObjWithoutTimeOffset = null,
 				unsubscribe = $ngRedux.subscribe(
 					() => {
 						let state = $ngRedux.getState();
 						timeChangedOffset = state.timeChangedOffset;
-						console.log(state);
 					}
 				);
 
@@ -36,7 +37,9 @@ angular.module('ontime.directives', ['ontime.services'])
 
 			intervalId = $interval(() => {
 				currentDateObj = Timezone.getDateObjByTimezone(timezoneVal, timeChangedOffset);
+				currentDateObjWithoutTimeOffset = Timezone.getDateObjByTimezone(timezoneVal);
 				scope.currentDatetime = currentDateObj;
+				scope.currentDatetimeWithoutTimeOffset = currentDateObjWithoutTimeOffset;
 				scope.time = Timezone.formatDatetime(currentDateObj, 'HH:mm');
 				scope.date = Timezone.formatDatetime(currentDateObj, 'yyyy-MM-dd');
 			}, 1000);
@@ -49,9 +52,9 @@ angular.module('ontime.directives', ['ontime.services'])
 	  	restrict: 'A',
 	    scope: { trigger: '=focusMe' },
 	    link: function(scope, element) {
-	  		scope.$watch('trigger', function(value) {
-		        if(value === true) {
-		        	$timeout(function() {
+	  		scope.$watch('trigger', (value) => {
+		        if(true === value) {
+		        	$timeout(() => {
 		        		element[0].focus(); 
 		        		scope.trigger = false;
 		        	});
@@ -71,12 +74,18 @@ angular.module('ontime.directives', ['ontime.services'])
 		},
 		link: function(scope, element, attrs) {
 			scope.currentDatetime = null;
+			scope.currentDatetimeWithoutTimeOffset = null;
 			scope.setDatetime = null;
+
+			scope.$watch('city.editTime', (value) => {
+				if(true === value) {
+					scope.setDatetime = scope.currentDatetime;
+				}
+			});
 			
 			scope.handleChange = function() {
-				let offset = scope.setDatetime.getTime() - scope.currentDatetime.getTime();
+				let offset = scope.setDatetime.getTime() - scope.currentDatetimeWithoutTimeOffset.getTime();
 				$ngRedux.dispatch(changeTime(offset));
-				console.log(offset);
 			};
 		}
 	};
