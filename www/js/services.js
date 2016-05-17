@@ -227,6 +227,7 @@ angular.module('ontime.services', ['ngStorage', 'ngResource'])
         latlng: coords.latitude + ',' + coords.longitude,
         location_type: 'ROOFTOP',
         result_type: 'street_address',
+        language: 'en',
         key: 'AIzaSyCRjmhfIjuLWJ1Toq030j7015gtybKplBs'
       }).then(function(data) {
         if('OK' === data.status && data.results.length > 0 && data.results[0].address_components) {
@@ -243,6 +244,7 @@ angular.module('ontime.services', ['ngStorage', 'ngResource'])
 
         _getCurrentCoords().then(function(coords) {
           _reverseGeocode(coords).then(function(addressComponents) {
+            console.log(addressComponents);
             var areaInfo = {},
                 areaFields = {
                   administrative_area_level_1: 'cityName',

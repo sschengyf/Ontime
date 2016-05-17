@@ -1,22 +1,26 @@
+import { changeTime } from './redux/actions';
+
 angular.module('ontime.controllers', [])
 
-.controller('CitiesCtrl', function($scope, System, $location, UserCities) {
+.controller('CitiesCtrl', function($scope, System, $location, UserCities, $ngRedux) {
 
-  System.init().then(function(userCities) {
-    $scope.userCities = userCities;
-  });
+	System.init().then(function(userCities) {
+		$scope.userCities = userCities;
+	});
 
-  $scope.gotoAdd = function() {
-  	$location.path('/add').replace();
-  };
+	$scope.gotoAdd = function() {
+		$location.path('/add').replace();
+	};
 
-  $scope.remove = function(city) {
-  	var userCities = UserCities.remove(city);
-  	userCities[0] = $scope.userCities[0];
-  	$scope.userCities = userCities;
-  };
+	$scope.remove = function(city) {
+		var userCities = UserCities.remove(city);
+		userCities[0] = $scope.userCities[0];
+		$scope.userCities = userCities;
+	};
 
-
+	$scope.resetDatetime = function() {
+		$ngRedux.dispatch(changeTime(0));
+	};
 })
 
 .controller('CityAddCtrl', function($scope, LocalJsonResource, $location, UserCities) {

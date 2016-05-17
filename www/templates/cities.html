@@ -1,9 +1,9 @@
 <ion-view view-title="Cities">
   <ion-nav-buttons side="right">
-      <button class="button button-clear button-positive" ng-click="gotoAdd()">
-      Add
-      </button>
-    </ion-nav-buttons>
+    <button class="button button-clear button-positive" ng-click="gotoAdd()">
+    Add
+    </button>
+  </ion-nav-buttons>
   <ion-content>
     <ion-list>
       <ion-item class="item-remove-animate item-avatar item-icon-right" ng-repeat="city in userCities" type="item-text-wrap" ng-click="city.editTime=true">
@@ -14,4 +14,11 @@
       </ion-item>
     </ion-list>
   </ion-content>
+  <ion-footer-bar class="no-background">
+    <div class="text-center full-width">
+      <button class="button button-clear button-positive" ng-click="resetDatetime()">
+      Current Date & Time
+      </button>  
+    </div>
+  </ion-footer-bar>
 </ion-view>

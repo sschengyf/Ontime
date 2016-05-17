@@ -40,13 +40,16 @@
 /******/ 	return __webpack_require__(0);
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
-/***/ function(module, exports) {
+/******/ ({
+
+/***/ 0:
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	angular.module('ontime.controllers', []).controller('CitiesCtrl', function ($scope, System, $location, UserCities) {
+	var _actions = __webpack_require__(41);
+
+	angular.module('ontime.controllers', []).controller('CitiesCtrl', function ($scope, System, $location, UserCities, $ngRedux) {
 
 		System.init().then(function (userCities) {
 			$scope.userCities = userCities;
@@ -60,6 +63,10 @@
 			var userCities = UserCities.remove(city);
 			userCities[0] = $scope.userCities[0];
 			$scope.userCities = userCities;
+		};
+
+		$scope.resetDatetime = function () {
+			$ngRedux.dispatch((0, _actions.changeTime)(0));
 		};
 	}).controller('CityAddCtrl', function ($scope, LocalJsonResource, $location, UserCities) {
 
@@ -91,5 +98,47 @@
 		};
 	});
 
+/***/ },
+
+/***/ 40:
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var CHANGE_TIME = 'change_time';
+
+	exports.CHANGE_TIME = CHANGE_TIME;
+
+/***/ },
+
+/***/ 41:
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.changeTime = undefined;
+
+	var _actionTypes = __webpack_require__(40);
+
+	var actionTypes = _interopRequireWildcard(_actionTypes);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	var changeTime = function changeTime(timeChangedOffset) {
+		return {
+			type: actionTypes.CHANGE_TIME,
+			timeChangedOffset: timeChangedOffset
+		};
+	};
+
+	exports.changeTime = changeTime;
+
 /***/ }
-/******/ ]);
+
+/******/ });
