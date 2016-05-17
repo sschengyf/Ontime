@@ -4,7 +4,7 @@ angular.module('ontime.directives', ['ontime.services'])
 
 .directive('realtimeDatetime', ['$interval', 'Timezone', '$ngRedux', function($interval, Timezone, $ngRedux) {
 	return {
-		template: '<div class="city-datetime"><h2>{{time}}</h2><h2>{{date}}</h2></div>',
+		template: '<div class="city-datetime"><h1 class="no-margin-bottom">{{time}}</h1><h2>{{date}}</h2></div>',
 		restrict: 'E',
 		replace: true,
 		scope: {
