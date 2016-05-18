@@ -244,7 +244,6 @@ angular.module('ontime.services', ['ngStorage', 'ngResource'])
 
         _getCurrentCoords().then(function(coords) {
           _reverseGeocode(coords).then(function(addressComponents) {
-            console.log(addressComponents);
             var areaInfo = {},
                 areaFields = {
                   administrative_area_level_1: 'cityName',
