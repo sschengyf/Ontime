@@ -1,7 +1,7 @@
 <div class="city-item">
 	<div class="city-summary">
 		<h2>{{city.name}}</h2>
-		<h2>UTC{{city.timezone}}</h2>
+		<h2 ng-class="{utc: '' !== city.timezone}">{{city.timezone}}</h2>
 		<p>{{city.country}}</p>
 	</div>
 	<div class="city-datetime-wrapper">

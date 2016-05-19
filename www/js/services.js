@@ -1,10 +1,12 @@
+import { defaultCurrentCity } from './const';
+
 angular.module('ontime.services', ['ngStorage', 'ngResource'])
 
 .factory('AJAX', function($http, $q) {
 
-  var _get = function(url, params) {
+  const _get = function(url, params) {
 
-    var deferred = $q.defer();
+    let deferred = $q.defer();
 
     $http.get(url, {
       params: params
@@ -21,8 +23,8 @@ angular.module('ontime.services', ['ngStorage', 'ngResource'])
     return deferred.promise;
   };
 
-  var _post = function(url, data) {
-    var deferred = $q.defer();
+  const _post = function(url, data) {
+    let deferred = $q.defer();
 
     $http.post(url, data).then(
       (response) => {
@@ -57,20 +59,7 @@ angular.module('ontime.services', ['ngStorage', 'ngResource'])
 
   return {
     all: function() {
-      var userCities = $localStorage.userCities || [],
-          currentCity = {
-            id: 'currentLocation',
-            name: '',
-            country: '',
-            timezone: ''
-          };
-
-      if(0 === userCities.length) {
-        userCities.push(currentCity);
-        $localStorage.userCities = userCities;
-      }
-
-      return userCities;
+      return $localStorage.userCities || [];
     },
     add: function(city) {
       try {
@@ -125,31 +114,31 @@ angular.module('ontime.services', ['ngStorage', 'ngResource'])
     return date;
   };
 
-  var _getCurrentDatetime = function() {
+  const _getCurrentDatetime = function() {
     var today = new Date();
     return _formatDatetime(today, 'yyyy-mm-dd hh:mm:ss');
   };
 
-  var _getCurrentTimezoneOffsetMins = function() {
-    var today = new Date(),
+  const _getCurrentTimezoneOffsetMins = function() {
+    let today = new Date(),
         currentTimezoneOffsetMins = today.getTimezoneOffset();
     return -currentTimezoneOffsetMins;
   };
 
-  var _getCurrentTimezone = function() {
+  const _getCurrentTimezone = function() {
     return _convertTimezoneFormat('hh:mm', _getCurrentTimezoneOffsetMins() / 60);
   };
 
-  var _convertTimezoneFormat = function(format, timezone) {
+  const _convertTimezoneFormat = function(format, timezone) {
 
-    var timezoneFormats = {
+    const timezoneFormats = {
       'hh:mm': function(timezone) {
 
         if(isNaN(timezone)) {
           return false;
         }
 
-        var absTimezone = Math.abs(timezone), 
+        let absTimezone = Math.abs(timezone), 
             hours = parseInt(absTimezone),
             minutes = absTimezone * 60 % 60,
             prefix = timezone < 0 ? '-' : '+',
@@ -166,12 +155,12 @@ angular.module('ontime.services', ['ngStorage', 'ngResource'])
       },
       'number': function(timezone) {
 
-        var hhmmFormatReg = /^[+-]{1}\d{2}:\d{2}$/;
+        const hhmmFormatReg = /^[+-]{1}\d{2}:\d{2}$/;
         if(!hhmmFormatReg.test(timezone)) {
           return false;
         }
 
-        var hoursMinutes = timezone.split(':'),
+        let hoursMinutes = timezone.split(':'),
             hours = parseInt(hoursMinutes[0]),
             minutes = parseInt(hoursMinutes[1]);
 
@@ -198,9 +187,9 @@ angular.module('ontime.services', ['ngStorage', 'ngResource'])
 
 .factory('GeoLocation', function($cordovaGeolocation, $q, AJAX) {
 
-    var _getCurrentCoords = function() {
+    const _getCurrentCoords = function() {
 
-      var deferred = $q.defer(),
+      let deferred = $q.defer(),
           posOptions = {timeout: 10000, enableHighAccuracy: false};
 
       $cordovaGeolocation
@@ -218,10 +207,10 @@ angular.module('ontime.services', ['ngStorage', 'ngResource'])
       return deferred.promise;
     };
 
-    var _reverseGeocode = function(coords) {
+    const _reverseGeocode = function(coords) {
 
-      var reverseGeocodeingURL = "https://maps.googleapis.com/maps/api/geocode/json",
-          deferred = $q.defer();
+      const reverseGeocodeingURL = "https://maps.googleapis.com/maps/api/geocode/json";
+      let deferred = $q.defer();
 
       AJAX.get(reverseGeocodeingURL, {
         latlng: coords.latitude + ',' + coords.longitude,
@@ -238,15 +227,15 @@ angular.module('ontime.services', ['ngStorage', 'ngResource'])
       return deferred.promise;
     };
 
-    var _getCurrentAreaInfo = function() {
+    const _getCurrentAreaInfo = function() {
 
-        var deferred = $q.defer();
+        let deferred = $q.defer();
 
         _getCurrentCoords().then(function(coords) {
           _reverseGeocode(coords).then(function(addressComponents) {
-            var areaInfo = {},
+            let areaInfo = {},
                 areaFields = {
-                  administrative_area_level_1: 'cityName',
+                  administrative_area_level_1: 'city',
                   country: 'country'
                 },
                 areaField;
@@ -270,32 +259,29 @@ angular.module('ontime.services', ['ngStorage', 'ngResource'])
     };
 })
 
-.factory('System', function(UserCities, GeoLocation, Timezone, $q) {
+.factory('City', function(GeoLocation, Timezone, $q) {
 
-  var _init = function() {
+  const _getCurrentCity = function() {
     
-    var userCities = UserCities.all(),
+    let deferred = $q.defer(),
         currentTimezone = Timezone.getCurrentTimezone(),
-        deferred = $q.defer(),
-        currentCity = userCities[0];
+        currentCity = defaultCurrentCity;
 
     currentCity.timezone = currentTimezone;
 
     GeoLocation.getCurrentAreaInfo().then(function(areaInfo) {
-      currentCity.name = areaInfo.cityName;
+      currentCity.name = areaInfo.city;
       currentCity.country = areaInfo.country;
-      UserCities.save(userCities);
-      deferred.resolve(userCities);
+      deferred.resolve(currentCity);
     }, function(err) {
       currentCity.name = 'Unknown Place';
-      UserCities.save(userCities);
-      deferred.resolve(userCities);
+      deferred.reject(currentCity);
     });
 
     return deferred.promise;
   };
 
   return {
-    init: _init
+    getCurrentCity: _getCurrentCity
   }
 });

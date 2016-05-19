@@ -40,11 +40,14 @@
 /******/ 	return __webpack_require__(0);
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
-/***/ function(module, exports) {
+/******/ ({
+
+/***/ 0:
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
+
+	var _const = __webpack_require__(42);
 
 	angular.module('ontime.services', ['ngStorage', 'ngResource']).factory('AJAX', function ($http, $q) {
 
@@ -97,20 +100,7 @@
 
 	  return {
 	    all: function all() {
-	      var userCities = $localStorage.userCities || [],
-	          currentCity = {
-	        id: 'currentLocation',
-	        name: '',
-	        country: '',
-	        timezone: ''
-	      };
-
-	      if (0 === userCities.length) {
-	        userCities.push(currentCity);
-	        $localStorage.userCities = userCities;
-	      }
-
-	      return userCities;
+	      return $localStorage.userCities || [];
 	    },
 	    add: function add(city) {
 	      try {
@@ -247,8 +237,8 @@
 
 	  var _reverseGeocode = function _reverseGeocode(coords) {
 
-	    var reverseGeocodeingURL = "https://maps.googleapis.com/maps/api/geocode/json",
-	        deferred = $q.defer();
+	    var reverseGeocodeingURL = "https://maps.googleapis.com/maps/api/geocode/json";
+	    var deferred = $q.defer();
 
 	    AJAX.get(reverseGeocodeingURL, {
 	      latlng: coords.latitude + ',' + coords.longitude,
@@ -271,13 +261,12 @@
 
 	    _getCurrentCoords().then(function (coords) {
 	      _reverseGeocode(coords).then(function (addressComponents) {
-	        console.log(addressComponents);
 	        var areaInfo = {},
 	            areaFields = {
-	          administrative_area_level_1: 'cityName',
+	          administrative_area_level_1: 'city',
 	          country: 'country'
 	        },
-	            areaField;
+	            areaField = void 0;
 	        addressComponents.forEach(function (item) {
 	          if (areaField = areaFields[item.types[0]]) {
 	            areaInfo[areaField] = item.long_name;
@@ -296,35 +285,50 @@
 	    getCurrentCoords: _getCurrentCoords,
 	    getCurrentAreaInfo: _getCurrentAreaInfo
 	  };
-	}).factory('System', function (UserCities, GeoLocation, Timezone, $q) {
+	}).factory('City', function (GeoLocation, Timezone, $q) {
 
-	  var _init = function _init() {
+	  var _getCurrentCity = function _getCurrentCity() {
 
-	    var userCities = UserCities.all(),
+	    var deferred = $q.defer(),
 	        currentTimezone = Timezone.getCurrentTimezone(),
-	        deferred = $q.defer(),
-	        currentCity = userCities[0];
+	        currentCity = _const.defaultCurrentCity;
 
 	    currentCity.timezone = currentTimezone;
 
 	    GeoLocation.getCurrentAreaInfo().then(function (areaInfo) {
-	      currentCity.name = areaInfo.cityName;
+	      currentCity.name = areaInfo.city;
 	      currentCity.country = areaInfo.country;
-	      UserCities.save(userCities);
-	      deferred.resolve(userCities);
+	      deferred.resolve(currentCity);
 	    }, function (err) {
 	      currentCity.name = 'Unknown Place';
-	      UserCities.save(userCities);
-	      deferred.resolve(userCities);
+	      deferred.reject(currentCity);
 	    });
 
 	    return deferred.promise;
 	  };
 
 	  return {
-	    init: _init
+	    getCurrentCity: _getCurrentCity
 	  };
 	});
 
+/***/ },
+
+/***/ 42:
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	   value: true
+	});
+	var defaultCurrentCity = exports.defaultCurrentCity = {
+	   id: '0',
+	   name: 'Locating',
+	   country: '',
+	   timezone: ''
+	};
+
 /***/ }
-/******/ ]);
+
+/******/ });

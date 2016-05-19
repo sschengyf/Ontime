@@ -31,8 +31,8 @@ angular.module('ontime.directives', ['ontime.services'])
 				);
 
 			element.on('$destroy', () => {
-		      $interval.cancel(intervalId);
-		      unsubscribe();
+				$interval.cancel(intervalId);
+				unsubscribe();
 		    });
 
 			intervalId = $interval(() => {

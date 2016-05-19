@@ -49,10 +49,18 @@
 
 	var _actions = __webpack_require__(41);
 
-	angular.module('ontime.controllers', []).controller('CitiesCtrl', function ($scope, System, $location, UserCities, $ngRedux) {
+	var _const = __webpack_require__(42);
 
-		System.init().then(function (userCities) {
-			$scope.userCities = userCities;
+	angular.module('ontime.controllers', []).controller('CitiesCtrl', function ($scope, $location, UserCities, $ngRedux, City, Timezone) {
+
+		$scope.userCities = UserCities.all();
+
+		_const.defaultCurrentCity.timezone = Timezone.getCurrentTimezone();
+
+		$scope.currentCity = _const.defaultCurrentCity;
+
+		City.getCurrentCity().then(function (currentCity) {
+			$scope.currentCity = currentCity;
 		});
 
 		$scope.gotoAdd = function () {
@@ -60,9 +68,7 @@
 		};
 
 		$scope.remove = function (city) {
-			var userCities = UserCities.remove(city);
-			userCities[0] = $scope.userCities[0];
-			$scope.userCities = userCities;
+			$scope.userCities = UserCities.remove(city);;
 		};
 
 		$scope.resetDatetime = function () {
@@ -138,6 +144,23 @@
 	};
 
 	exports.changeTime = changeTime;
+
+/***/ },
+
+/***/ 42:
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	   value: true
+	});
+	var defaultCurrentCity = exports.defaultCurrentCity = {
+	   id: '0',
+	   name: 'Locating',
+	   country: '',
+	   timezone: ''
+	};
 
 /***/ }
 

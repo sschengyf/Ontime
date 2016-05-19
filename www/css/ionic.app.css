@@ -9768,3 +9768,6 @@ a.button {
 
 .no-margin-bottom {
   margin-bottom: 0; }
+
+.utc::before {
+  content: 'UTC'; }

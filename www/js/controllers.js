@@ -1,11 +1,18 @@
 import { changeTime } from './redux/actions';
+import { defaultCurrentCity } from './const';
 
 angular.module('ontime.controllers', [])
 
-.controller('CitiesCtrl', function($scope, System, $location, UserCities, $ngRedux) {
+.controller('CitiesCtrl', function($scope, $location, UserCities, $ngRedux, City, Timezone) {
 
-	System.init().then(function(userCities) {
-		$scope.userCities = userCities;
+	$scope.userCities = UserCities.all();
+
+	defaultCurrentCity.timezone = Timezone.getCurrentTimezone();
+
+	$scope.currentCity = defaultCurrentCity;
+
+	City.getCurrentCity().then((currentCity) => {
+		$scope.currentCity = currentCity;
 	});
 
 	$scope.gotoAdd = function() {
@@ -13,9 +20,7 @@ angular.module('ontime.controllers', [])
 	};
 
 	$scope.remove = function(city) {
-		var userCities = UserCities.remove(city);
-		userCities[0] = $scope.userCities[0];
-		$scope.userCities = userCities;
+		$scope.userCities = UserCities.remove(city);;
 	};
 
 	$scope.resetDatetime = function() {
@@ -25,10 +30,10 @@ angular.module('ontime.controllers', [])
 
 .controller('CityAddCtrl', function($scope, LocalJsonResource, $location, UserCities) {
 
-	var userCities = UserCities.all();
+	let userCities = UserCities.all();
 
 	LocalJsonResource.read('cities.json').get(function(data) {
-		var cities = data.cities;
+		let cities = data.cities;
 
 		cities = cities.filter(function(city) {
 			return !(userCities.findIndex(function(userCity) {
@@ -39,7 +44,7 @@ angular.module('ontime.controllers', [])
 		$scope.cities = cities;
 	});
 
-	var gotoCities = function() {
+	const gotoCities = function() {
 		$location.path('/cities').replace();
 	}
 
