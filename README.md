@@ -32,7 +32,7 @@ This APP is based on [ionic](https://github.com/driftyco/ionic) framework, [more
 
 Cordova + Angular + Redux + ES2015
 
-##Tools
+##Workflow
 
 gulp + webpack + babel
 
