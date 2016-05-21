@@ -324,7 +324,7 @@
 	});
 	var defaultCurrentCity = exports.defaultCurrentCity = {
 	   id: '0',
-	   name: 'Locating',
+	   name: 'Locating...',
 	   country: '',
 	   timezone: ''
 	};

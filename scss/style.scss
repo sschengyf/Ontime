@@ -11,6 +11,13 @@
 	height: 100%;
 	.city-summary {
 		display: inline-block;
+		.country-name::after {
+			content: '\200B';
+			
+		}
+		.utc::before {
+			content: 'UTC';
+		}
 	}
 	.city-datetime-wrapper {
 		display: inline-block;
@@ -47,7 +54,4 @@
 }
 .no-margin-bottom {
 	margin-bottom: 0;
-}
-.utc::before {
-	content: 'UTC';
 }
