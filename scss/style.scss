@@ -55,6 +55,6 @@
 .no-margin-bottom {
 	margin-bottom: 0;
 }
-.bar.item-input-inset .item-input-wrapper input {
-	width: 80%;
+.item-input-inset .item-input-wrapper input {
+	flex: 1 0 auto;
 }
